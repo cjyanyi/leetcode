@@ -1,5 +1,11 @@
 # -*- coding:UTF-8 -*-
 
+# Greedy
+# Sollution: how to convert a qusetion to nested loop problem that each step repeats its former step;
+# each step is a local opt: find what is best choice for each step
+# local opt lead to global opt? need proof
+
+
 ## 1
 #  can be simplified
 def assign_cookies(child,cookies):
@@ -110,20 +116,87 @@ def queReconstruct(ls):
 def partitionStr(s):
     length = len(s)
     right = 0
-    result = []
+    result = [0]
     for i in range(length-1):
-        char = s[i]
-        if right<s.find(char):
+        ch = s[i]
+        if right<s.find(ch):
             result.append(i)
 
         # evaluate 'right'
-        j=s.find(char,start=i+1)
+        j=s.find(ch,i+1)
         while (j>0 and j<length-1):
-            if j>ringht:
+            if j>right:
                 right = j
-            j = s.find(char,start=j+1)
+            j = s.find(ch,j+1)
 
-    return result
+    sollution = [result[i]-result[i-1] for i in range(1,len(result))]
+    sollution.append(length-result.pop())
+    return sollution
+
+# 605
+def canPlaceFlowers(ls,n):
+    length = len(ls)
+    cnt = 0
+    flowers = 0
+    for i in range(length):
+        if ls[i]==1:
+            cnt = 0
+            continue
+        elif ls[i]==0:
+            cnt+=1
+            if cnt==3:
+                flowers+=1
+                cnt=1
+            elif cnt==2 and i==length-1:
+                flowers+=1
+    return flowers>=n
+
+# 392
+# ? how does str.find implement? and the O()
+def isSubsequence(sub, str):
+    length1 = len(sub)
+    length2 = len(str)
+
+    left = str.find(sub[0])
+    if left<0:
+        return False
+    # to find left index of i-th char of subseq
+    for i in range(1,length1):
+        if left<length2-1:
+            left = str.find(sub[i],left+1)
+        else:
+            return False
+    return True
+
+# 665 Non-decreasing Array (Easy)
+def nondecrArray(ls):
+    count=0
+    for i in range (1,len(ls)):
+        if ls[i-1]>ls[i]:
+            count +=1
+            if i-2>=0 and i+1<len(ls):
+                if ls[i-2] > ls[i+1]:
+                    return False
+
+        if count==2:
+            return False
+    return True
+
+#122
+def maxProfit(ls):
+    sumProfit = 0
+    for i in range(1,len(ls)):
+        gap = ls[i]-ls[i-1]
+        if gap>0:
+            sumProfit+=gap
+
+    return sumProfit
+
+
+
+
+
+
 
 
 
@@ -149,5 +222,11 @@ if __name__ == '__main__':
     #print(queReconstruct(l))
 
     s='ababcbacadefegdehijhklij'
-    s.find('a',__start=1)
     #print(partitionStr(s))
+
+    ls = [1,0,0,0,0]
+    print(canPlaceFlowers(ls,2))
+
+    s1='abc'
+    s2='bahbgdc'
+    print(isSubsequence(s1,s2))
